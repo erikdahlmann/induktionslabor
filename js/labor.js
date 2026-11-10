@@ -10,7 +10,7 @@ let displayCanvas, displayTex, voltCanvas, voltTex;
 let zeitGesamt = 0;
 
 const KAMERAS = {
-  gesamt:  { pos: [0.22, 1.00, 1.55], ziel: [0.05, 0.50, 0] },
+  gesamt:  { pos: [0.18, 0.96, 1.62], ziel: [0.05, 0.49, 0] },
   spule:   { pos: [0.30, 0.66, 0.52], ziel: [0, 0.48, 0] },
   messung: { pos: [0.72, 0.70, 0.78], ziel: [0.45, 0.50, 0.05] }
 };
@@ -56,11 +56,14 @@ export function laborStarten(elementId) {
   renderer.setAnimationLoop(schleifeLauf);
 }
 
-function groesseAnpassen() {
+export function groesseAnpassen() {
   const host = renderer.domElement.parentElement;
   const b = host.clientWidth, h = host.clientHeight || b * 11 / 16;
   renderer.setSize(b, h, false);
   kamera.aspect = b / h;
+  // waagerechten Bildwinkel konstant halten, damit der Aufbau immer ganz im Bild ist
+  const fovH = 62 * Math.PI / 180;
+  kamera.fov = 2 * Math.atan(Math.tan(fovH / 2) / kamera.aspect) * 180 / Math.PI;
   kamera.updateProjectionMatrix();
 }
 

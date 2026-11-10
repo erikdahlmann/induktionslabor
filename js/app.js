@@ -1,7 +1,7 @@
 // Verdrahtung der ganzen Seite
 import { zustand, SPULEN, bMax, messwert, feldZurZeit, zahl,
          spannungText, flussdichteText, rateText } from './physik.js';
-import { laborStarten, laborHorcher, kameraSetzen } from './labor.js';
+import { laborStarten, laborHorcher, kameraSetzen, groesseAnpassen } from './labor.js';
 import { animFluss, animBU, animFlaeche, animLenz, selbstcheck } from './theorie.js';
 import { messwertHinzufuegen, tabelleLeeren, tabelleZeichnen, diagrammZeichnen } from './auswertung.js';
 import { aufgabenAufbauen } from './aufgaben.js';
@@ -205,15 +205,40 @@ function exportAufbauen() {
   document.getElementById('btn-laden').addEventListener('click', () => standLaden(speicher, () => {
     tabelleZeichnen(); diagrammZeichnen(); vorschauZeigen(speicher);
   }));
-  // Vorschau aktualisieren, wenn der Abschnitt sichtbar wird
-  const b = new IntersectionObserver(e => {
-    if (e[0].isIntersecting) vorschauZeigen(speicher);
-  }, { threshold: 0.15 });
-  b.observe(document.getElementById('export'));
+}
+
+// ---------------------------------------------------------------- Reiter
+function reiterAufbauen() {
+  const knoepfe = Array.from(document.querySelectorAll('.reiter-knopf'));
+  const zeigen = (name, scrollen = true) => {
+    const ziel = document.getElementById(name);
+    if (!ziel || !ziel.classList.contains('seite')) return;
+    document.querySelectorAll('.seite').forEach(s => s.classList.toggle('seite-aktiv', s === ziel));
+    knoepfe.forEach(k => k.classList.toggle('reiter-aktiv', k.dataset.seite === name));
+    if (history.replaceState) history.replaceState(null, '', '#' + name);
+    if (name === 'labor') setTimeout(groesseAnpassen, 30);
+    if (name === 'auswertung') setTimeout(diagrammZeichnen, 30);
+    if (name === 'export') setTimeout(() => vorschauZeigen(speicher), 30);
+    if (scrollen) {
+      const oben = document.getElementById('reiter').offsetTop;
+      window.scrollTo({ top: oben, behavior: window.scrollY > oben + 400 ? 'instant' : 'smooth' });
+    }
+  };
+  knoepfe.forEach(k => k.addEventListener('click', () => zeigen(k.dataset.seite)));
+  document.querySelectorAll('[data-weiter]').forEach(b =>
+    b.addEventListener('click', () => {
+      zeigen(b.dataset.weiter, false);
+      window.scrollTo({ top: document.getElementById('reiter').offsetTop, behavior: 'instant' });
+    }));
+  const start = location.hash.replace('#', '');
+  if (start) zeigen(start, false);
+  addEventListener('hashchange', () => zeigen(location.hash.replace('#', ''), false));
+  window.reiterZeigen = zeigen;
 }
 
 // ---------------------------------------------------------------- Start
 function start() {
+  reiterAufbauen();
   formelnSetzen();
   animFluss(); animBU(); animFlaeche(); animLenz();
   selbstcheck(speicher);
