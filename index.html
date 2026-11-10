@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Induktionslabor – Änderung von B und A</title>
+<link rel="stylesheet" href="lib/katex/katex.min.css">
+<link rel="stylesheet" href="css/stil.css">
+</head>
+<body>
+
+<header class="kopf">
+  <div class="kopf-inner">
+    <p class="kopf-reihe">Physik · Oberstufe · Elektromagnetische Induktion</p>
+    <h1>Induktion durch Änderung<br>des Magnetfelds oder der Fläche</h1>
+    <p class="kopf-lead">Eine Selbstlerneinheit mit virtuellem Labor. Du arbeitest dich von oben nach unten durch:
+      erst die Theorie mit Animationen, dann der Versuch in 3D, dann die Auswertung und die Aufgaben.
+      Ganz unten exportierst du deine Bearbeitung.</p>
+    <div class="kopf-ziele">
+      <h2>Das kannst du danach</h2>
+      <ul>
+        <li>den magnetischen Fluss <span class="m">\Phi = B\cdot A</span> erklären</li>
+        <li>das Induktionsgesetz <span class="m">U_{\mathrm{ind}} = -n\,\dot{\Phi}</span> auf beide Fälle anwenden</li>
+        <li>aus einem <span class="m">B(t)</span>-Diagramm das <span class="m">U_{\mathrm{ind}}(t)</span>-Diagramm zeichnen</li>
+        <li>aus Messwerten den Proportionalitätsfaktor <span class="m">n\cdot A</span> bestimmen</li>
+      </ul>
+    </div>
+    <nav class="sprung">
+      <a href="#theorie">1 · Theorie</a>
+      <a href="#labor">2 · Labor</a>
+      <a href="#auswertung">3 · Auswertung</a>
+      <a href="#aufgaben">4 · Aufgaben</a>
+      <a href="#export">5 · Export</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ 1 THEORIE ============ -->
+<section id="theorie" class="abschnitt">
+  <h2 class="abschnitt-titel"><span class="nr">1</span> Die Theorie in fünf Schritten</h2>
+
+  <article class="karte">
+    <h3>1.1 Der magnetische Fluss</h3>
+    <p>Ein Magnetfeld der Flussdichte <span class="m">B</span> durchsetzt eine Fläche <span class="m">A</span>.
+      Das Produkt aus beiden heißt <b>magnetischer Fluss</b>:</p>
+    <p class="formel" data-tex="\Phi = B \cdot A \qquad [\Phi] = 1\,\mathrm{T\,m^2} = 1\,\mathrm{Wb}"></p>
+    <p>Stell dir die Feldlinien als Regen vor und die Fläche als Eimeröffnung. Der Fluss ist die Menge Regen,
+      die durch die Öffnung fällt. Du kannst sie auf zwei Arten ändern:
+      <b>mehr Regen</b> (größeres <span class="m">B</span>) oder <b>größere Öffnung</b> (größeres <span class="m">A</span>).</p>
+    <div class="anim-box">
+      <canvas id="anim-fluss" width="880" height="330"></canvas>
+      <div class="anim-regler">
+        <label>Flussdichte <span class="m">B</span>
+          <input type="range" id="fl-b" min="0" max="10" step="0.1" value="5">
+          <output id="fl-b-out">5,0 mT</output></label>
+        <label>Fläche <span class="m">A</span>
+          <input type="range" id="fl-a" min="2" max="40" step="0.5" value="21">
+          <output id="fl-a-out">21,0 cm²</output></label>
+        <p class="anim-ergebnis">Fluss <span class="m">\Phi</span> = <b id="fl-phi">10,5 µWb</b></p>
+      </div>
+    </div>
+  </article>
+
+  <article class="karte">
+    <h3>1.2 Nur die <em>Änderung</em> zählt</h3>
+    <p>Ein ruhendes Magnetfeld induziert nichts. Spannung entsteht nur, solange sich der Fluss <b>ändert</b>.
+      Je schneller die Änderung, desto größer die Spannung. Für eine Spule mit <span class="m">n</span> Windungen gilt
+      das <b>Induktionsgesetz</b>:</p>
+    <p class="formel" data-tex="U_{\mathrm{ind}} = -\,n\cdot\dot{\Phi} = -\,n\cdot\frac{\mathrm{d}(B\cdot A)}{\mathrm{d}t}"></p>
+    <p>Der Punkt über dem <span class="m">\Phi</span> heißt „Ableitung nach der Zeit“, gesprochen „Phi Punkt“.
+      Aus dem Produkt werden zwei Fälle:</p>
+    <div class="zwei-faelle">
+      <div class="fall">
+        <p class="fall-kopf">Fall 1 · Fläche bleibt gleich</p>
+        <p class="formel" data-tex="U_{\mathrm{ind}} = -\,n\,A\,\dot{B}"></p>
+        <p>Die Spule steckt fest in einem Feld, das stärker oder schwächer wird.
+          <b>Das ist der Versuch in diesem Labor.</b></p>
+      </div>
+      <div class="fall">
+        <p class="fall-kopf">Fall 2 · Feld bleibt gleich</p>
+        <p class="formel" data-tex="U_{\mathrm{ind}} = -\,n\,B\,\dot{A}"></p>
+        <p>Eine Leiterschleife wird aus einem festen Feld gezogen. Die wirksame Fläche schrumpft.
+          <b>Das ist der zweite Modus im Labor.</b></p>
+      </div>
+    </div>
+  </article>
+
+  <article class="karte">
+    <h3>1.3 Animation: aus <span class="m">B(t)</span> wird <span class="m">U(t)</span></h3>
+    <p>Links siehst du, wie das Feld anwächst und wieder fällt. Rechts entsteht gleichzeitig die induzierte Spannung.
+      Achte darauf: <b>Während <span class="m">B</span> gleichmäßig steigt, ist <span class="m">U</span> konstant.</b>
+      Bei gleichmäßigem Fall kippt die Spannung auf den entgegengesetzten Wert.</p>
+    <div class="anim-box">
+      <canvas id="anim-bu" width="880" height="360"></canvas>
+      <div class="anim-regler">
+        <label>Verlauf von <span class="m">B</span>
+          <select id="bu-form">
+            <option value="dreieck">Dreieck (gleichmäßig auf und ab)</option>
+            <option value="sinus">Sinus</option>
+            <option value="trapez">Trapez (mit Pause oben)</option>
+            <option value="konstant">konstant (nichts passiert)</option>
+          </select></label>
+        <label>Tempo
+          <input type="range" id="bu-tempo" min="0.2" max="2.5" step="0.1" value="1">
+          <output id="bu-tempo-out">1,0 ×</output></label>
+        <button class="knopf-klein" id="bu-pause">Pause</button>
+      </div>
+    </div>
+    <p class="merke"><b>Merke:</b> Die Spannungskurve ist die <em>Steigung</em> der Feldkurve, gespiegelt am Nullpunkt
+      (wegen des Minuszeichens) und mit <span class="m">n\cdot A</span> gestreckt.</p>
+  </article>
+
+  <article class="karte">
+    <h3>1.4 Animation: die Fläche ändert sich</h3>
+    <p>Hier bleibt das Feld konstant. Die Leiterschleife wird herausgezogen. Nur der Teil der Schleife,
+      der noch im Feld liegt, zählt. Solange sie sich bewegt, zeigt das Messgerät aus.</p>
+    <div class="anim-box">
+      <canvas id="anim-flaeche" width="880" height="300"></canvas>
+      <div class="anim-regler">
+        <label>Geschwindigkeit <span class="m">v</span>
+          <input type="range" id="fa-v" min="0" max="2" step="0.05" value="0.8">
+          <output id="fa-v-out">0,80 m/s</output></label>
+        <label>Feldstärke <span class="m">B</span>
+          <input type="range" id="fa-b" min="0" max="500" step="10" value="250">
+          <output id="fa-b-out">250 mT</output></label>
+        <p class="anim-ergebnis"><span class="m">U_{\mathrm{ind}}</span> = <b id="fa-u">0,0 mV</b></p>
+      </div>
+    </div>
+    <p class="formel" data-tex="U_{\mathrm{ind}} = -\,n\,B\,b\,v \qquad (b = \text{Breite der Schleife})"></p>
+  </article>
+
+  <article class="karte">
+    <h3>1.5 Das Minuszeichen: die Lenzsche Regel</h3>
+    <p>Der induzierte Strom wehrt sich gegen seine Ursache. Nimmt der Fluss zu, erzeugt der Strom ein Feld,
+      das dagegen hält. Nimmt er ab, stützt der Strom das Feld. Das steckt im Minuszeichen.</p>
+    <div class="anim-box">
+      <canvas id="anim-lenz" width="880" height="280"></canvas>
+      <div class="anim-regler">
+        <label>Magnet bewegen
+          <input type="range" id="lz-pos" min="-100" max="100" step="1" value="-90"></label>
+        <p class="hinweis-klein">Schiebe den Magneten langsam hin und her und beobachte Pfeilrichtung und Zeiger.</p>
+        <p class="anim-ergebnis" id="lz-text">Nichts passiert – der Magnet steht still.</p>
+      </div>
+    </div>
+    <p class="merke"><b>Kurz:</b> Nähert sich der Nordpol, zeigt die Spule ihm einen Nordpol entgegen (Abstoßung).
+      Entfernt er sich, zieht die Spule mit einem Südpol hinterher.</p>
+  </article>
+
+  <article class="karte karte-check">
+    <h3>Kurzer Selbstcheck vor dem Labor</h3>
+    <p>Beantworte kurz, dann klicke auf „Prüfen“. Deine Antworten kommen in den Export.</p>
+    <div id="check-liste"></div>
+  </article>
+</section>
+
+<!-- ============ 2 LABOR ============ -->
+<section id="labor" class="abschnitt">
+  <h2 class="abschnitt-titel"><span class="nr">2</span> Das virtuelle Labor</h2>
+  <p class="abschnitt-lead">Links der Versuchsaufbau in 3D, rechts die Bedienung und die Messgeräte.
+    Drehen: linke Maustaste ziehen. Zoomen: Mausrad. Auf dem iPad: ein Finger dreht, zwei Finger zoomen.</p>
+
+  <div class="labor-raster">
+    <div class="buehne-wrap">
+      <div id="buehne"></div>
+      <div class="buehne-leiste">
+        <button class="knopf" id="btn-start">Versuch starten</button>
+        <button class="knopf knopf-zweit" id="btn-reset">Zurücksetzen</button>
+        <span class="uhr">t = <b id="uhr-wert">0,0 s</b></span>
+        <span class="kamera-knoepfe">
+          <button class="knopf-klein" data-kamera="gesamt">Gesamt</button>
+          <button class="knopf-klein" data-kamera="spule">Spule nah</button>
+          <button class="knopf-klein" data-kamera="messung">Messgeräte</button>
+        </span>
+      </div>
+    </div>
+
+    <aside class="pult">
+      <div class="pult-tabs">
+        <button class="tab tab-aktiv" data-modus="feld">Feld ändern (B)</button>
+        <button class="tab" data-modus="flaeche">Fläche ändern (A)</button>
+      </div>
+
+      <div class="pult-block" id="pult-feld">
+        <h3>Netzgerät</h3>
+        <label class="pult-zeile">Stromform
+          <select id="r-form">
+            <option value="dreieck">Dreieckstrom</option>
+            <option value="sinus">Sinusstrom</option>
+            <option value="konstant">Gleichstrom (konstant)</option>
+          </select></label>
+        <label class="pult-zeile">Scheitelstrom <span class="m">\hat{I}</span>
+          <input type="range" id="r-strom" min="0.1" max="1.6" step="0.05" value="1.2">
+          <output id="r-strom-out">1,20 A</output></label>
+        <label class="pult-zeile">Frequenz <span class="m">f</span>
+          <input type="range" id="r-freq" min="0.01" max="2" step="0.01" value="0.12">
+          <output id="r-freq-out">0,12 Hz</output></label>
+        <p class="pult-info">Feldspule: <b>N = 1000</b> Windungen auf <b>l = 30 cm</b> ·
+          <span class="m">B = \mu_0\frac{N}{l}I</span> → Scheitelwert <b id="info-bmax">5,03 mT</b></p>
+
+        <h3>Induktionsspule</h3>
+        <label class="pult-zeile">Spule
+          <select id="r-spule"></select></label>
+        <label class="pult-zeile">Windungszahl <span class="m">n</span>
+          <input type="number" id="r-n" min="1" max="2000" step="1" value="150"></label>
+        <label class="pult-zeile">Querschnitt <span class="m">A</span> in cm²
+          <input type="number" id="r-a" min="0.5" max="80" step="0.1" value="21"></label>
+        <p class="pult-info"><span class="m">n\cdot A</span> = <b id="info-na">0,0315 m²</b></p>
+      </div>
+
+      <div class="pult-block" id="pult-flaeche" hidden>
+        <h3>Feldmagnet</h3>
+        <label class="pult-zeile">Flussdichte <span class="m">B</span>
+          <input type="range" id="f-b" min="0" max="600" step="10" value="300">
+          <output id="f-b-out">300 mT</output></label>
+        <h3>Leiterschleife</h3>
+        <label class="pult-zeile">Windungen <span class="m">n</span>
+          <input type="number" id="f-n" min="1" max="200" step="1" value="20"></label>
+        <label class="pult-zeile">Breite <span class="m">b</span> in cm
+          <input type="number" id="f-b-breite" min="1" max="20" step="0.5" value="8"></label>
+        <label class="pult-zeile">Zuggeschwindigkeit <span class="m">v</span>
+          <input type="range" id="f-v" min="0" max="1.5" step="0.05" value="0.5">
+          <output id="f-v-out">0,50 m/s</output></label>
+        <p class="pult-info">Erwartet: <span class="m">U = n\,B\,b\,v</span> = <b id="info-uflaeche">0,24 V</b></p>
+      </div>
+
+      <div class="pult-block">
+        <h3>Messgeräte</h3>
+        <div class="anzeigen">
+          <div class="anzeige">
+            <span class="anzeige-name">Hall-Sonde</span>
+            <span class="anzeige-wert" id="anz-b">0,00 mT</span>
+          </div>
+          <div class="anzeige">
+            <span class="anzeige-name">Änderungsrate <span class="m">\dot B</span></span>
+            <span class="anzeige-wert" id="anz-bp">0,00 mT/s</span>
+          </div>
+          <div class="anzeige anzeige-stark">
+            <span class="anzeige-name">Spannung <span class="m">U_{\mathrm{ind}}</span></span>
+            <span class="anzeige-wert" id="anz-u">0,0 µV</span>
+          </div>
+        </div>
+        <canvas id="oszi" width="520" height="260"></canvas>
+        <button class="knopf" id="btn-messen">Messwert übernehmen</button>
+        <p class="hinweis-klein">Der Messwert geht in deine Tabelle weiter unten.
+          Nimm mindestens vier Werte mit <b>verschiedenen</b> Änderungsraten auf.</p>
+      </div>
+    </aside>
+  </div>
+
+  <article class="karte karte-auftrag">
+    <h3>Dein Arbeitsauftrag im Labor</h3>
+    <ol>
+      <li>Stelle Dreieckstrom ein. Wähle die Spule mit <span class="m">n=150</span> und <span class="m">A=21\,\mathrm{cm^2}</span>.</li>
+      <li>Starte den Versuch. Beschreibe, wie <span class="m">B(t)</span> und <span class="m">U(t)</span> zusammenhängen.</li>
+      <li>Nimm vier Messwerte bei verschiedenen Frequenzen auf (z. B. 0,04 / 0,06 / 0,12 / 0,24 Hz).</li>
+      <li>Verdopple danach die Windungszahl und miss noch einmal. Was ändert sich?</li>
+      <li>Schalte auf Sinusstrom. Beschreibe die Form der Spannungskurve.</li>
+      <li>Wechsle in den Modus „Fläche ändern“ und prüfe <span class="m">U = n\,B\,b\,v</span>.</li>
+    </ol>
+    <label class="feld-label">Deine Beobachtungen (Schritt 2, 4 und 5)
+      <textarea id="txt-beobachtung" rows="6" placeholder="Schreibe in ganzen Sätzen …"></textarea></label>
+  </article>
+</section>
+
+<!-- ============ 3 AUSWERTUNG ============ -->
+<section id="auswertung" class="abschnitt">
+  <h2 class="abschnitt-titel"><span class="nr">3</span> Auswertung</h2>
+  <p class="abschnitt-lead">Trage die Messwerte in ein <span class="m">U</span>-<span class="m">\dot B</span>-Diagramm ein.
+    Liegen die Punkte auf einer Ursprungsgeraden, sind die Größen proportional.
+    Die Steigung der Geraden muss <span class="m">n\cdot A</span> sein.</p>
+
+  <div class="auswert-raster">
+    <div class="karte">
+      <h3>Messtabelle</h3>
+      <div class="tabelle-wrap">
+        <table id="messtabelle">
+          <thead><tr>
+            <th>#</th><th><span class="m">n</span></th><th><span class="m">A</span> / cm²</th>
+            <th><span class="m">\dot B</span> / (mT/s)</th><th><span class="m">U</span> / µV</th><th></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="leer-hinweis" id="tab-leer">Noch keine Messwerte. Geh nach oben ins Labor und klicke „Messwert übernehmen“.</p>
+      <button class="knopf-klein" id="btn-tab-leeren">Tabelle leeren</button>
+    </div>
+
+    <div class="karte">
+      <h3>Diagramm <span class="m">U</span> über <span class="m">\dot B</span></h3>
+      <canvas id="diagramm" width="560" height="420"></canvas>
+      <div class="regress" id="regress-box">
+        <p>Ausgleichsgerade: <b id="reg-formel">–</b></p>
+        <p>Steigung: <b id="reg-steigung">–</b></p>
+        <p>Theorie <span class="m">n\cdot A</span>: <b id="reg-theorie">–</b></p>
+        <p id="reg-urteil" class="urteil"></p>
+      </div>
+    </div>
+  </div>
+
+  <article class="karte">
+    <h3>Deine Auswertung in Worten</h3>
+    <label class="feld-label">1. Welcher Zusammenhang besteht zwischen <span class="m">U_{\mathrm{ind}}</span> und <span class="m">\dot B</span>? Begründe mit deinem Diagramm.
+      <textarea id="txt-aus1" rows="4"></textarea></label>
+    <label class="feld-label">2. Welche Bedeutung hat die Steigung der Ausgleichsgeraden? Vergleiche mit <span class="m">n\cdot A</span>.
+      <textarea id="txt-aus2" rows="4"></textarea></label>
+    <label class="feld-label">3. Formuliere das Ergebnis als Gesetz (mit Formel und Minuszeichen).
+      <textarea id="txt-aus3" rows="3"></textarea></label>
+  </article>
+</section>
+
+<!-- ============ 4 AUFGABEN ============ -->
+<section id="aufgaben" class="abschnitt">
+  <h2 class="abschnitt-titel"><span class="nr">4</span> Aufgaben zum Rechnen</h2>
+  <p class="abschnitt-lead">Rechne mit Papier und Stift und trage nur das Ergebnis ein.
+    Nach dem Prüfen kannst du die Lösung aufklappen.</p>
+  <div id="aufgaben-liste"></div>
+  <div class="punkte-leiste">Richtig gelöst: <b id="punkte-stand">0 von 0</b></div>
+</section>
+
+<!-- ============ 5 EXPORT ============ -->
+<section id="export" class="abschnitt">
+  <h2 class="abschnitt-titel"><span class="nr">5</span> Deine Bearbeitung exportieren</h2>
+  <p class="abschnitt-lead">Hier kommt alles zusammen: Beobachtungen, Messtabelle, Diagramm, Auswertung, Aufgaben.
+    Trage deinen Namen ein und wähle ein Format.</p>
+  <div class="karte">
+    <div class="export-kopf">
+      <label class="feld-label">Name
+        <input type="text" id="ex-name" placeholder="Vorname Nachname"></label>
+      <label class="feld-label">Kurs
+        <input type="text" id="ex-kurs" placeholder="z. B. Physik Q1"></label>
+      <label class="feld-label">Datum
+        <input type="date" id="ex-datum"></label>
+    </div>
+    <div class="export-knoepfe">
+      <button class="knopf" id="btn-pdf">Als PDF drucken</button>
+      <button class="knopf knopf-zweit" id="btn-html">Als HTML-Datei speichern</button>
+      <button class="knopf knopf-zweit" id="btn-csv">Messwerte als CSV</button>
+      <button class="knopf-klein" id="btn-speichern">Zwischenstand im Browser sichern</button>
+      <button class="knopf-klein" id="btn-laden">Zwischenstand laden</button>
+    </div>
+    <p class="hinweis-klein">Der Zwischenstand bleibt nur auf diesem Gerät. Für die Abgabe nimm PDF oder HTML.</p>
+    <div id="export-vorschau" class="vorschau"></div>
+  </div>
+</section>
+
+<section class="abschnitt abschnitt-schluss">
+  <div class="karte karte-wissen">
+    <h2>Noch mehr dazu</h2>
+    <div class="wissen-raster">
+      <div>
+        <h3>Wo das im Alltag steckt</h3>
+        <p><b>Generator:</b> Eine Spule dreht sich im Magnetfeld. Die wirksame Fläche ändert sich sinusförmig –
+          daher kommt die Wechselspannung aus der Steckdose.</p>
+        <p><b>Induktionskochfeld:</b> Ein schnell wechselndes Feld induziert im Topfboden Wirbelströme. Der Topf wird heiß,
+          das Feld selbst nicht.</p>
+        <p><b>Transformator:</b> Zwei Spulen auf einem Eisenkern. Die erste erzeugt ein Wechselfeld,
+          die zweite „sieht“ <span class="m">\dot B</span> und erzeugt Spannung.</p>
+        <p><b>Kabelloses Laden:</b> Genau derselbe Trick, nur klein und mit hoher Frequenz.</p>
+      </div>
+      <div>
+        <h3>Die Geschichte dahinter</h3>
+        <p>1831 wickelt <b>Michael Faraday</b> zwei Drahtspulen auf einen Eisenring. Beim Ein- und Ausschalten
+          der einen zuckt die Nadel an der anderen – und nur dann. Das war die Entdeckung: nicht das Feld,
+          sondern seine <em>Änderung</em> treibt die Spannung.</p>
+        <p>1834 ergänzt <b>Emil Lenz</b> die Richtung: Der induzierte Strom wirkt seiner Ursache entgegen.
+          Sonst könnte man aus dem Nichts Energie gewinnen – das verbietet der Energieerhaltungssatz.</p>
+        <h3>Typische Fehler</h3>
+        <ul class="fehler">
+          <li>„Starkes Feld = große Spannung.“ Falsch. Nur schnelle <em>Änderung</em> zählt.</li>
+          <li>Einheiten mischen: cm² und m² sauber umrechnen (1 cm² = 10⁻⁴ m²).</li>
+          <li>Das Minuszeichen weglassen. Es steht für die Lenzsche Regel.</li>
+          <li>Bei Dreieckstrom eine dreieckige Spannung erwarten. Es wird ein Rechteck.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="fuss">
+  <p>Erstellt für den Physikunterricht am Paul-Klee-Gymnasium Overath.
+     Der Versuch folgt dem Schulbuchkapitel „Induktion durch Änderung des Magnetfelds oder der Fläche“.</p>
+</footer>
+
+<script src="lib/katex/katex.min.js"></script>
+<script type="importmap">
+{ "imports": { "three": "./lib/three.module.js", "three/": "./lib/" } }
+</script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
